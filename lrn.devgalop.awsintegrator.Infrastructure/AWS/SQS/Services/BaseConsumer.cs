@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.SQS;
+using Amazon.SQS.Model;
 using lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -82,6 +83,31 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
                 }
             }
 
+        }
+
+        protected async Task<IEnumerable<Message>> GetMessagesAsync(CancellationToken cancellationToken)
+        {
+            if(!_consumerConfiguration.EnableSqsConsumer)
+            {
+                await Task.Delay(5000,cancellationToken);
+                return new List<Message>();
+            }
+            List<Message> messages = new();
+            int messagesPerRequest = _consumerConfiguration.MaxNumberOfMessages < 10 ? _consumerConfiguration.MaxNumberOfMessages :10;
+            var sqsRequest = new ReceiveMessageRequest()
+            {
+                QueueUrl = _queueUrl,
+                WaitTimeSeconds = 0,
+                MaxNumberOfMessages = messagesPerRequest,
+                AttributeNames = new List<string>(){"All"}
+            };
+
+            for (int idxMessage = 0; idxMessage < _consumerConfiguration.MaxNumberOfMessages; idxMessage++)
+            {
+                var sqsResponse = await _sqsClient.ReceiveMessageAsync(sqsRequest,cancellationToken);
+                if(sqsResponse.Messages.Count != 0) messages.AddRange(sqsResponse.Messages);
+            }
+            return messages;
         }
 
         protected abstract Task WorkerConsumerAsync(CancellationToken cancellationToken);
