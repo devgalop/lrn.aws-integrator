@@ -9,6 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
 {
+    /// <summary>
+    /// This class is responsible for getting messages and process it
+    /// </summary>
+    /// <typeparam name="ClassType">Custom class that is responsible for process messages</typeparam>
+    /// <typeparam name="MessageType">SQS message deserialization class</typeparam>
     public abstract class BaseSqsJsonConsumer<ClassType, MessageType> : BaseConsumer<ClassType>
     {
         public BaseSqsJsonConsumer(
@@ -19,6 +24,12 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
         {
         }
 
+        /// <summary>
+        /// It is responsible for getting messages from sqs and processing the results of each one.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected override async Task WorkerConsumerAsync(CancellationToken cancellationToken)
         {
             int validateConsumerCounter = 0;
@@ -33,8 +44,10 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
                     _logger.LogInformation($"[{DateTime.Now}] {messageConsumer}");
                 }
                 
+                //Getting messages from sqs
                 var messages = await GetMessagesAsync(cancellationToken);
                 List<SqsJsonRecord<MessageType>> messagesDeserialized = new();
+                
                 foreach (var message in messages)
                 {
                     var sqsMessage = JsonSerializer.Deserialize<MessageType>(message.Body) 
@@ -55,12 +68,14 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
 
                 foreach (var message in messagesDeserialized)
                 {
+                    //Delete messages that have been processed correctly
                     if(messagesSucceed.IsSucceed && !message.HasError)
                     {
                         await _sqsClient.DeleteMessageAsync(_queueUrl, message.ReceiptHandle, cancellationToken);
                         continue;
                     }
 
+                    // Validation of retries
                     if(message.Retries >= _consumerConfiguration.MaxRetries)
                     {
                         //If your process has a queue for error add the call here
@@ -69,6 +84,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
                         continue;
                     }
 
+                    //Change message visibility for X time
                     await _sqsClient.ChangeMessageVisibilityAsync(_queueUrl, message.ReceiptHandle, 300);
                 }
                 
@@ -76,6 +92,11 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
             }
         }
 
+        /// <summary>
+        /// Abstract method in charge of processing any message. 
+        /// </summary>
+        /// <param name="messages">List of deserialized messages</param>
+        /// <returns></returns>
         protected abstract Task<BaseResponse> ProcessMessages(List<SqsJsonRecord<MessageType>> messages);
     }
 }

@@ -13,6 +13,10 @@ using Microsoft.Extensions.Logging;
 
 namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
 {
+    /// <summary>
+    ///  BaseConsumer is the class responsible for creating an SQS connection and assigning tasks to different threads.
+    /// </summary>
+    /// <typeparam name="ClassType">Custom class that is responsible for process messages</typeparam>
     public abstract class BaseConsumer<ClassType> : BackgroundService
     {
         protected readonly ILogger<ClassType> _logger;
@@ -48,6 +52,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            //Create and assign tasks to multiple threads
             Task[] tasks = new Task[_consumerConfiguration.MaxThreads];
             for (int idxTask = 0; idxTask < _consumerConfiguration.MaxThreads; idxTask++)
             {
@@ -67,6 +72,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
             int counterTask = 0;
             while(!cancellationToken.IsCancellationRequested)
             {
+                //Assign another task in the same thread when a task is finished
                 int idxEndTask = Task.WaitAny(tasks,cancellationToken);
                 tasks[idxEndTask] = Task.Run(async ()=>
                 {
@@ -74,6 +80,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
                 },cancellationToken);
                 counterTask +=1;
 
+                //Clean up local memory by running the garbage collector
                 if(counterTask >= 10)
                 {
                     GC.Collect();
