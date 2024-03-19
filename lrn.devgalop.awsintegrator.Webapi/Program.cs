@@ -2,8 +2,8 @@ using lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Implements SQS into your solution
-builder.Services.AddSQS(builder.Configuration);
+//Implements SQS consumers into your solution
+builder.Services.AddSQSConsumer(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddHealthChecks();
