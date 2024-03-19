@@ -7,15 +7,15 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
 {
-    public abstract class BaseConsumer<T> : BackgroundService
+    public abstract class BaseConsumer<ClassType> : BackgroundService
     {
-        protected readonly ILogger<T> _logger;
-        protected readonly IServiceProvider _serviceProvider;
+        protected readonly ILogger<ClassType> _logger;
         protected readonly IConfiguration _configuration;
         protected readonly ConsumerConfiguration _consumerConfiguration;
         protected readonly string _queueName;
@@ -24,14 +24,12 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
         private bool _firstExecution = true;
 
         public BaseConsumer(
-            ILogger<T> logger,
-            IServiceProvider serviceProvider,
+            ILogger<ClassType> logger,
             IConfiguration configuration,
             ConsumerConfiguration consumerConfiguration,
             string queueName)
-        {
+        {   
             _logger = logger;
-            _serviceProvider = serviceProvider;
             _configuration = configuration;
             _consumerConfiguration = consumerConfiguration;
             _queueName = queueName;
