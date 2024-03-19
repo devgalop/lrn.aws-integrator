@@ -1,5 +1,5 @@
 
-<h1 align="center">SecureLib</h1>
+<h1 align="center">AWS Integrator</h1>
 
 <p align="center">
   <img alt="Github top language" src="https://img.shields.io/github/languages/top/devgalop/lrn.aws-integrator?color=4bcab1">
@@ -29,7 +29,7 @@
 
 <br>
 
-## :dart: About SecureLib
+## :dart: About AWS Integrator
 
 The AWS Integrator is a simple C# library, developed with .Net 8 but fully compatible with .Net 6+, that provides you with the following features: 
 
