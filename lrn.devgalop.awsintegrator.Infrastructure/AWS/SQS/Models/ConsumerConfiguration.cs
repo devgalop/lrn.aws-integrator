@@ -12,5 +12,10 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Models
         public int MaxThreads { get; set; } = 1;
         public int MaxNumberOfMessages { get; set; } = 10;
         public int MaxRetries { get; set; } = 1;
+
+        public void UpdateConsumerStatus(bool status)
+        {
+            EnableSqsConsumer = status;
+        }
     }
 }

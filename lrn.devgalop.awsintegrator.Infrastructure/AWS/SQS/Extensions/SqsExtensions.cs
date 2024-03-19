@@ -30,7 +30,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
                 MaxThreads = maxThreads
             };
 
-            services.AddTransient(_ => config);
+            services.AddSingleton(_ => config);
         }
     }
 }
