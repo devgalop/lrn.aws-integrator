@@ -34,7 +34,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
 
             //Add your custom consumers as a hosted service
             //Ex: services.AddHostedService<MyOwnSQSConsumer>();
-
+            services.AddHostedService<SampleSQSConsumer>();
         }
 
         public static void AddSQSPublisher(this IServiceCollection services)
