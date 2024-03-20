@@ -12,10 +12,9 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
 {
     public static class SqsExtensions
     {
-        public static void AddSQSConsumer(this IServiceCollection services, IConfiguration configuration, IServiceProvider serviceProvider)
+        public static void AddSQSConsumer(this IServiceCollection services, IConfiguration configuration)
         {
-            services.UseAWSSecrets();
-            var awsAuth = (BasicAuthentication)serviceProvider.GetRequiredService(typeof(BasicAuthentication));
+            var awsAuth = services.UseAWSSecrets();
             _ = bool.TryParse(configuration["AWS:SQS:EnableConsumer"], out bool isEnabled);
             _ = int.TryParse(configuration["AWS:SQS:RequestConfiguration:MaxRetries"], out int maxRetries);
             _ = int.TryParse(configuration["AWS:SQS:RequestConfiguration:MaxNumberOfMessages"], out int maxMessages);
@@ -38,11 +37,11 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
 
         public static void AddSQSPublisher(this IServiceCollection services)
         {
-            services.UseAWSSecrets();
+             _ = services.UseAWSSecrets();
             services.AddTransient<IPublisherService, PublisherService>();
         }
 
-        public static void UseAWSSecrets(this IServiceCollection services)
+        public static BasicAuthentication UseAWSSecrets(this IServiceCollection services)
         {
             BasicAuthentication awsAuth = new()
             {
@@ -51,6 +50,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
                 RegionCode = Environment.GetEnvironmentVariable("AWS_SQS_REGION") ?? throw new Exception("AWS Region is required")
             };
             services.AddSingleton(_ => awsAuth);
+            return awsAuth;
         }
     }
 }
