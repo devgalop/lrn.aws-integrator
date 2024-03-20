@@ -46,8 +46,9 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
                 
                 //Getting messages from sqs
                 var messages = await GetMessagesAsync(cancellationToken);
+                if(messages.Count()==0) continue;
+
                 List<SqsJsonRecord<MessageType>> messagesDeserialized = new();
-                
                 foreach (var message in messages)
                 {
                     var sqsMessage = JsonSerializer.Deserialize<MessageType>(message.Body) 

@@ -41,7 +41,8 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
                 consumerConfiguration.Connection.AccessKey,
                 consumerConfiguration.Connection.SecretKey,
                 RegionEndpoint.GetBySystemName(consumerConfiguration.Connection.RegionCode));
-            _queueUrl = _sqsClient.GetQueueUrlAsync(queueName).Result.QueueUrl;
+            string queueRealName = configuration[$"AWS:SQS:Queues:{queueName}"]??throw new Exception($"Queue {queueName} does not exist");
+            _queueUrl = _sqsClient.GetQueueUrlAsync(queueRealName).Result.QueueUrl;
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
