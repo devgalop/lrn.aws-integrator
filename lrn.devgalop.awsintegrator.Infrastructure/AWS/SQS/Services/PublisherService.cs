@@ -35,6 +35,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
             try
             {
                 if(string.IsNullOrEmpty(queueName)) throw new ArgumentNullException("Queue name is a required field");
+                if(message is null) throw new ArgumentNullException("Message cannot be null");
                 var queueUrlResponse = await _sqsClient.GetQueueUrlAsync(queueName, cancellationToken);
                 if(queueUrlResponse.HttpStatusCode != HttpStatusCode.OK) throw new Exception("The queue does not exist or the URL cannot be retrieved");
                 string queueUrl = queueUrlResponse.QueueUrl;
