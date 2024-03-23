@@ -16,7 +16,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
         {
             services.UseAWSSecrets();
             var serviceProvider = services.BuildServiceProvider();
-            var awsAuth = (BasicAuthentication)serviceProvider.GetRequiredService(typeof(BasicAuthentication));
+            var awsAuth = (BasicSQSAuthentication)serviceProvider.GetRequiredService(typeof(BasicSQSAuthentication));
             _ = bool.TryParse(configuration["AWS:SQS:EnableConsumer"], out bool isEnabled);
             _ = int.TryParse(configuration["AWS:SQS:RequestConfiguration:MaxRetries"], out int maxRetries);
             _ = int.TryParse(configuration["AWS:SQS:RequestConfiguration:MaxNumberOfMessages"], out int maxMessages);
@@ -45,7 +45,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions
 
         public static void UseAWSSecrets(this IServiceCollection services)
         {
-            BasicAuthentication awsAuth = new()
+            BasicSQSAuthentication awsAuth = new()
             {
                 AccessKey = Environment.GetEnvironmentVariable("AWS_SQS_ACCESSKEY") ?? throw new Exception("AWS Access key is required"),
                 SecretKey = Environment.GetEnvironmentVariable("AWS_SQS_SECRETKEY") ?? throw new Exception("AWS Secret key is required"),

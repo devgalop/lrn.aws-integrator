@@ -1,4 +1,5 @@
 using lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Extensions;
+using lrn.devgalop.awsintegrator.Infrastructure.AWS.S3Buckets.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
@@ -10,6 +11,9 @@ try
 
     //Implements SQS publisher
     builder.Services.AddSQSPublisher();
+
+    //Implements S3 service
+    builder.Services.AddS3();
 
     builder.Services.AddControllers();
     builder.Services.AddHealthChecks();
