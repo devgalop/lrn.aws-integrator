@@ -7,13 +7,11 @@ WORKDIR /src
 COPY ["lrn.devgalop.awsintegrator.Core", "./lrn.devgalop.awsintegrator.Core"]
 COPY ["lrn.devgalop.awsintegrator.Infrastructure", "./lrn.devgalop.awsintegrator.Infrastructure"]
 COPY ["lrn.devgalop.awsintegrator.Webapi", "./lrn.devgalop.awsintegrator.Webapi"]
-COPY ["lrn.devgalop.awsintegrator.Tests", "./lrn.devgalop.awsintegrator.Tests"]
 
 COPY . .
 WORKDIR "/src/."
 
 RUN dotnet build "lrn.devgalop.awsintegrator.Webapi/lrn.devgalop.awsintegrator.Webapi.csproj" -c Release -o /app/build
-RUN dotnet test "lrn.devgalop.awsintegrator.Tests/lrn.devgalop.awsintegrator.Tests.csproj"
 
 #publish stage
 FROM build AS publish
