@@ -20,7 +20,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.S3Buckets.Services
 
         public S3Service(
             ILogger<S3Service> logger,
-            BasicAuthentication basicAuthentication
+            BasicS3Authentication basicAuthentication
             )
         {
             _logger = logger;

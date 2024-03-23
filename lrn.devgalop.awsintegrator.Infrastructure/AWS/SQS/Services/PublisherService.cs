@@ -15,12 +15,12 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Services
     public class PublisherService : IPublisherService
     {
         private readonly ILogger<PublisherService> _logger;
-        private readonly BasicAuthentication _awsAuth;
+        private readonly BasicSQSAuthentication _awsAuth;
         private readonly AmazonSQSClient _sqsClient;
 
         public PublisherService(
             ILogger<PublisherService> logger,
-            BasicAuthentication awsAuth)
+            BasicSQSAuthentication awsAuth)
         {
             _logger = logger;
             _awsAuth = awsAuth;

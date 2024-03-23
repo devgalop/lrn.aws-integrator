@@ -7,7 +7,7 @@ namespace lrn.devgalop.awsintegrator.Infrastructure.AWS.SQS.Models
 {
     public class ConsumerConfiguration
     {
-        public BasicAuthentication Connection {get; set;} = new();
+        public BasicSQSAuthentication Connection {get; set;} = new();
         public bool EnableSqsConsumer { get; set; } = false;
         public int MaxThreads { get; set; } = 1;
         public int MaxNumberOfMessages { get; set; } = 10;
